@@ -86,7 +86,8 @@
         },
         title: function() {
             return this.title;
-        }
+        },
+        titleBar: true
     },
 
 
@@ -367,7 +368,7 @@
                 // Show colorbox so the sizes can be calculated in older versions of jQuery
                 $box.css({visibility:'hidden', display:'block', opacity:''});
 
-                $loaded = $tag(div, 'LoadedContent', 'width:0; height:0; overflow:hidden; visibility:hidden');
+                $loaded = $tag(div, 'LoadedContent', 'width:0; height:0; overflow:hidden; visibility:hidden' + (settings.titleBar ? '' : '; margin-bottom: 0'));
                 $content.css({width:'', height:''}).append($loaded);
 
                 // Cache values needed for size calculations
@@ -422,10 +423,26 @@
                 visibility: 'visible'
             }).show();
 
-            if (settings.get('closeButton')) {
+            if (settings.get('closeButton') && settings.get('titleBar')) {
                 $close.html(settings.get('close')).appendTo($content);
             } else {
                 $close.appendTo('<div/>'); // replace with .detach() when dropping jQuery < 1.4
+            }
+
+            if (!settings.titleBar) {
+                $content.append(
+                    $title,
+                    $current,
+                    $prev,
+                    $next,
+                    $slideshow
+                );
+            } else {
+                $title.appendTo('<div/>');
+                $current.appendTo('<div/>');
+                $prev.appendTo('<div/>');
+                $next.appendTo('<div/>');
+                $slideshow.appendTo('<div/>');
             }
 
             load();
@@ -447,12 +464,14 @@
             $overlay = $tag(div, "Overlay").hide();
             $loadingOverlay = $([$tag(div, "LoadingOverlay")[0],$tag(div, "LoadingGraphic")[0]]);
             $wrap = $tag(div, "Wrapper");
+
+            $title = $tag(div, "Title");
+            $current = $tag(div, "Current");
+            $prev = $('<button type="button"/>').attr({id:prefix+'Previous'});
+            $next = $('<button type="button"/>').attr({id:prefix+'Next'});
+            $slideshow = $tag('button', "Slideshow");
+
             $content = $tag(div, "Content").append(
-                $title = $tag(div, "Title"),
-                $current = $tag(div, "Current"),
-                $prev = $('<button type="button"/>').attr({id:prefix+'Previous'}),
-                $next = $('<button type="button"/>').attr({id:prefix+'Next'}),
-                $slideshow = $tag('button', "Slideshow"),
                 $loadingOverlay
             );
 
